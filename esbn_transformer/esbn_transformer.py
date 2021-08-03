@@ -208,7 +208,8 @@ class EsbnTransformer(nn.Module):
         for block in self.layers:
             x = block(x, mask = mask)
 
-        x = reduce(x, 'b (s d) n -> b d n', 'mean', s = 2)
+        x = rearrange(x, 'b (s d) n -> b s d n', s = 2)
+        x = x[:, 1]
 
         x = self.post_transformer_block(x, mask = mask)
         return self.to_logits(x)
